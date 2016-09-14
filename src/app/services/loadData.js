@@ -1,6 +1,7 @@
 angular.module('services',[])
     .factory('loadData',function ($http, $q) {
     var oauthSignature = require('oauth-signature');
+    var searchIndex = 0;
     
     function randomString(length, chars) {
         var result = '';
@@ -8,19 +9,20 @@ angular.module('services',[])
         return result;
     }
     return {
-        "retrieveYelp": function(loc) {
+       "retrieveYelp": function(loc,term) {
+            
             var defered = $q.defer();
             var method = 'GET';
             var url = 'http://api.yelp.com/v2/search';
             var params = {
-                    callback: 'angular.callbacks._0',
+                    callback: 'angular.callbacks._'+ searchIndex,
                     location: loc,
                     oauth_consumer_key: 'hyIQVkkGLREDsZobyPp5dQ', //Consumer Key
                     oauth_token: 'PCPmAjNSEpcZ4T7TFaQ3VKj8-nhhRhWJ', //Token
                     oauth_signature_method: "HMAC-SHA1",
                     oauth_timestamp: new Date().getTime(),
                     oauth_nonce: randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-                    term: 'food'
+                    term: term
                 };
             var consumerSecret = 'UgKdpO46BHlEOT-3K3MIPilF-Ro'; //Consumer Secret
             var tokenSecret = 'uF-cSlKj9usvzCIjSeVzwR2OcS8'; //Token Secret
@@ -29,18 +31,21 @@ angular.module('services',[])
             $http.jsonp(url, {params: params}).
                 success(function (data) {
                     defered.resolve(data);
+                })
+                .error(function (data) {
+                        return false;
                 });
-
+                searchIndex++;
                 return defered.promise;
         },
-        "retrieveFourSquare": function (input) {  
+        "retrieveFourSquare": function (input,term) {  
             var defered = $q.defer();          
             var location = input;
             $http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + location + '&key=AIzaSyDfW4s3roB4dkmE-9qs5l5jOedyStGmL6Y')
             .success(function (dataFourSquare) {
                 var lat = dataFourSquare.results[0].geometry.location.lat;
                 var lng = dataFourSquare.results[0].geometry.location.lng;
-                $http.get('https://api.foursquare.com/v2/venues/search?ll=' + lat + ',' + lng + '&oauth_token=KV1IN4HPNDWD1Y5IFWZG3OF1BTK5X5MKAVUWEAB33RDAJJIO&v=20160831')
+                $http.get('https://api.foursquare.com/v2/venues/search?ll=' + lat + ',' + lng + '&oauth_token=KV1IN4HPNDWD1Y5IFWZG3OF1BTK5X5MKAVUWEAB33RDAJJIO&v=20160831&query=' + term)
                     .success(function (data) {
                         defered.resolve(data);
                     })

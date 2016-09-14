@@ -1,7 +1,61 @@
 <div class="home" ng-controller="homeController">
-<div ng-click="getLocation()">CLICK</div>
+    <div class="jumbotron">
+        <header class="header-content">
+            <div class="main container">
+                <div class="row-fluid">
 
-<p id="showResult">{{output}}</p>
-	<div id = "sample" style = "width:580px; height:400px;"></div>
+                    <h1 style="padding-left:4px;width:80%">
+                        Who What Where
+                    </h1>
 
+                    <div class="span6 pull-right pull-up" style="text-align:right;">
+                        <a href="http://www.foursquare.com"><i style="font-size:24px" title="Four Square" class="fa">
+                            &#xf180;</i></a>
+                        <a href="http://www.yelp.com"><i style="font-size:24px" title="Yelp" class="fa">&#xf1e9;</i></a>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <div class="container">
+        <div class="row row-centered">
+            <div class="container-fluid">
+                <h1>Search for anything</h1>
+
+                <h2 style="color:#1C2C3A">Find the best places to eat, drink, shop, or visit in any city in the
+                    world.</h2><br/><br/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container-fluid">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group" style="padding-bottom:10px;">
+                            <input type="text" class="search-input" ng-model="term" placeholder="Enter search term">
+                            <input type="text" class="search-input" ng-model="area" placeholder="Enter locality"/>
+                            <i style="font-size:20px" class="fa" title="Get your location" ng-click="getLocation()">
+                                &#xf124;</i>
+
+                            <button type="button" class="btn btn-primary btn-lg btn-success" value="Show"
+                                    ng-click="showResult()">Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container-fluid" id="googleMap" style="width:100vw; height:100vw;"></div>
+        </div>
+        <div class="row">
+            <div ng-repeat="search in queryData">
+                <div>
+                    <span>{{search.name}}</span>
+                    <span>{{search.contact.phone}}</span>
+                    <span>{{search.rating}}</span>
+                    <img ng-src="{{search.image}}"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

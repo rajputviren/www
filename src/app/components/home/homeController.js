@@ -1,80 +1,91 @@
 require('angular');
+var $ = require('jQuery');
 angular.module('myWWW.home', ['services'])
-.controller('homeController',function($scope,loadData){
-	var hotels = '';
-	var yelp = loadData.retrieveYelp('manhattan');
-	var fourSquare = loadData.retrieveFourSquare('pune');
-	$scope.output  = 'Click the button';
+    .controller('homeController', function ($scope, loadData, $http) {
+        loadMap(18.31, 73.85, 6); //Pune by default
 
-	yelp.then(function(data){
-		console.log('yelp',data.businesses);
-	});
+        var yelp;
+        var map;
+        var fourSquare;
+        var maxLength;
+        var geoLat;
+        var geoLng;
+        var yelpData, fourSquareData;
+        $scope.queryData = [];
 
+        $scope.showResult = function () {
+            if (($scope.area !== undefined) && ($scope.term !== undefined)) {
+                yelp = loadData.retrieveYelp($scope.area, $scope.term);
+                fourSquare = loadData.retrieveFourSquare($scope.area, $scope.term);
 
-	fourSquare.then(function(data){
-		hotels = data.response.venues;
-		console.log('4Sq',hotels);		
-	});
+                yelp.then(function (yData) {
+                    yelpData = yData.businesses;
 
-	
-	function loadMap() {			
-	        var mapOptions = {
-	           center:new google.maps.LatLng(18.31, 73.85), zoom:6,
-	           mapTypeId:google.maps.MapTypeId.ROADMAP
-	        };			
-	        var map = new google.maps.Map(document.getElementById("sample"),mapOptions);
+                    fourSquare.then(function (fData) {
+                        fourSquareData = fData.response.venues;
 
-	        for(var i=0;i<hotels.length;i++){
-	        	var name = hotels[i].name;
-	        	var marker = new google.maps.Marker({
-		            position: new google.maps.LatLng(hotels[i].location.lat, hotels[i].location.lng),
-		            map: map,
-		            animation:google.maps.Animation.Drop
-	       		});
+                        for (var i = 0; i < yelpData.length; i++) {
+                            var image = yelpData ? yelpData[i].image_url : undefined;
+                            $scope.queryData.push({
+                                name: fourSquareData[i].name,
+                                location: fourSquareData[i].location,
+                                contact: fourSquareData[i].contact,
+                                rating: yelpData[i].rating,
+                                image: image
+                            });
 
-	       		var infowindow = new google.maps.InfoWindow({
-               		content:name
-            	});	
+                        }
+                        loadMap($scope.queryData[0].location.lat, $scope.queryData[0].location.lng, 16);
+                        addMarker();
+                    });
+                });
+            }
+            $scope.area = $scope.term = '';
+        };
 
-            	google.maps.event.addListener(marker, 'click', function() {
-               		infowindow.open(map,marker);
-           		 });		          
-          	}       
-     	}
+        function addMarker() {
+            for (var i = 0; i < $scope.queryData.length; i++) {
+                var name = $scope.queryData[i].name;
 
-     	loadMap();
-	
-	$scope.getLocation = function() {
-		    if (navigator.geolocation) {
-		        navigator.geolocation.getCurrentPosition(showPosition, showError);
-		    } else {
-		       $scope.output= "Geolocation is not supported by this browser.";
-		    }
-		}
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng($scope.queryData[i].location.lat, $scope.queryData[i].location.lng),
+                    map: map,
+                    animation: google.maps.Animation.DROP
+                });
 
-		function showPosition(position) {
-		    var latlon = position.coords.latitude + "," + position.coords.longitude;
+                var infowindow = new google.maps.InfoWindow({
+                    content: name
+                });
 
-		    var img_url = "http://maps.googleapis.com/maps/api/staticmap?center="
-		    +latlon+"&zoom=14&size=400x300&sensor=false";
-		    //document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
-		}
+                google.maps.event.addListener(marker, 'mouseover', (function (marker, i) {
+                    return function () {
+                        infowindow.setContent($scope.queryData[i].name);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+            }
+        }
 
-		function showError(error) {
-		    switch(error.code) {
-		        case error.PERMISSION_DENIED:
-		            $scope.output = "User denied the request for Geolocation."
-		            break;
-		        case error.POSITION_UNAVAILABLE:
-		            $scope.output= "Location information is unavailable."
-		            break;
-		        case error.TIMEOUT:
-		            $scope.output= "The request to get user location timed out."
-		            break;
-		        case error.UNKNOWN_ERROR:
-		            $scope.output = "An unknown error occurred."
-		            break;
-		    }
-		}
-	
-});
+        function loadMap(lat, lng, zoom) {
+            var mapOptions = {
+                center: new google.maps.LatLng(lat, lng), zoom: zoom,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+        }
+
+        $scope.getLocation = function () {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                geoLat = location.coords.latitude;
+                geoLng = location.coords.longitude;
+                getCity(geoLat, geoLng)
+            });
+        };
+
+        function getCity(lat, lng) {
+            $http.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=AIzaSyDfW4s3roB4dkmE-9qs5l5jOedyStGmL6Y')
+                .success(function (data) {
+                    console.log('your exact location is', data.results[0].formatted_address)
+                })
+        }
+    });
