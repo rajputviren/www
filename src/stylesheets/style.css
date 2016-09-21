@@ -1,74 +1,50 @@
-.jumbotron {
-    background-color: #EA5B31;
-    padding: 4px;
-}
-
-.main {
-    color: white;
-    padding-left: 10px;
-}
-
-.container-fluid {
-    text-align: center;
-    color: #EA5B31;
-    padding-top: 5px;
-}
-
-.col-xs-5 {
-    padding-left: 300px;
-}
-
-.col-xs-6 {
-    padding-right: 200px
-}
-
-.search-input {
-    width: 40%;
-    height: 5%;
+.main-color {
+    background-color: #25D366 !important;
 }
 
 input {
     font-size: 20px;
 }
 
-i {
-    cursor: pointer;
-}
-
-.searchButton {
-    display: inline-block;
-    padding: 13px 12px;
-    margin-bottom: 0;
-    font-size: 14px;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    user-select: none;
-    border: 1px solid #398439;
-    border-radius: 4px;
-    color: #fff;
-    background-color: #449d44;
-}
-
 .home {
-    background: azure;
+    background: url('http://blog.hdwallsource.com/wp-content/uploads/2014/11/cute-blur-wallpaper-26341-27032-hd-wallpapers.jpg') no-repeat center center fixed;
+    background-size: cover;
 }
 
-.detail-container {
-    display: flex;
-    padding: 9px;
+.card .card-title {
+    font-size: 20px !important;
+    font-weight: bold !important;
 }
 
-.detail-child {
-    width: 100px;
+.card .card-content {
+    padding: 0 !important;
 }
 
-.flexContainer {
-    justify-content: space-around;
-    flex-flow: wrap;
-    display: flex;
-    align-content: flex-start;
+.card .card-content .card-title {
+    line-height: 90% !important;
+}
 
+.card.small {
+    height: 25% !important;
+}
+
+.card .card-reveal {
+    padding: 10px !important;
+}
+
+#term, #locality {
+    color: #FFF;
+    font-size: 24px;
+}
+
+p {
+    font-size: 12px;
+}
+
+i {
+    margin-right: 5px;
+}
+
+.btn {
+    width: 30%;
 }

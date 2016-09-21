@@ -3,18 +3,16 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var browserSync = require('browser-sync').create();
 var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
-
-var configFile = "./src/env/prod.js";
+var jshint = require('gulp-jshint');
 
 gulp.task('lint', function() {
-  //return gulp.src('./src/app/**/*.js')
-  // .pipe(jshint())
-  // .pipe(jshint.reporter('default'));
+  	return gulp.src('./src/app/**/*.js')
+		.pipe(jshint())
+		.pipe(jshint.reporter('default'));
 });
 
 gulp.task('scripts', function(){
-	return gulp.src(['./src/**/*.js',configFile])
+	return gulp.src(['main.js'])
 			.pipe(uglify())
 			.pipe(gulp.dest('./public/'));
 });
@@ -26,7 +24,7 @@ gulp.task('browserify', function() {
         .bundle()
         .pipe(source('main.js'))
         .pipe(gulp.dest('./public/'));
-})
+});
 
 gulp.task('copy', ['browserify'], function() {
     gulp.src(['./src/**/*.html','./src/**/*.css'])
@@ -34,7 +32,7 @@ gulp.task('copy', ['browserify'], function() {
 		.pipe(browserSync.stream())
 });
 
-gulp.task('build',['copy']);
+gulp.task('build',['lint','copy', 'scripts']);
 
 gulp.task('browser-sync', ['build'], function() {
     browserSync.init({
@@ -46,7 +44,6 @@ gulp.task('browser-sync', ['build'], function() {
         }
     });
 });
-
 
 gulp.task('default', ['browser-sync'], function(){
 	gulp.watch("./src/**/*.*", ["build"]);

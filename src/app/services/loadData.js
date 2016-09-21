@@ -10,8 +10,7 @@ angular.module('services', [])
         }
 
         return {
-            "retrieveYelp": function (loc, term) {
-                var error;
+            "fetchYelp": function (loc, term) {
                 var defered = $q.defer();
                 var method = 'GET';
                 var url = 'http://api.yelp.com/v2/search';
@@ -27,7 +26,7 @@ angular.module('services', [])
                 };
                 var consumerSecret = 'UgKdpO46BHlEOT-3K3MIPilF-Ro'; //Consumer Secret
                 var tokenSecret = 'uF-cSlKj9usvzCIjSeVzwR2OcS8'; //Token Secret
-                params['oauth_signature'] = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, {encodeSignature: false});
+                params.oauth_signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, {encodeSignature: false});
                 $http.jsonp(url, {params: params})
                     .success(function (data) {
                         defered.resolve(data);
@@ -38,7 +37,7 @@ angular.module('services', [])
                 searchIndex++;
                 return defered.promise;
             },
-            "retrieveFourSquare": function (loc, term) {
+            "fetchFourSquare": function (loc, term) {
                 var defered = $q.defer();
                 $http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + loc + '&key=AIzaSyDfW4s3roB4dkmE-9qs5l5jOedyStGmL6Y')
                     .success(function (dataFourSquare) {
@@ -48,11 +47,11 @@ angular.module('services', [])
                             .success(function (data) {
                                 defered.resolve(data);
                             })
-                            .error(function (data) {
-                                defered.resolve(data);
+                            .catch(function (response) {
+                                defered.resolve(response.status);
                             });
                     });
                 return defered.promise;
             }
-        }
+        };
     });

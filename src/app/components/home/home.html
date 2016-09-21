@@ -1,62 +1,108 @@
-<div class="home" ng-controller="homeController">
-    <div class="jumbotron">
-        <header class="header-content">
-            <div class="main container">
-                <div class="col-lg-2" style="display: flex">
+<div class="home">
+    <div class="row main-color">
+        <div class="col s12 m6" style="width:100%;">
+            <h1 class="header center-on-small-only">Who What Where</h1>
 
-                    <h1 style="padding-left:4px;">
-                        Who What Where
-                    </h1>
-
-                    <div style="flex: 50%;text-align: right;">
-                        <a href="http://www.foursquare.com"><i style="font-size:24px" title="Four Square" class="fa">
-                            &#xf180;</i></a>
-                        <a href="http://www.yelp.com"><i style="font-size:24px" title="Yelp" class="fa">&#xf1e9;</i></a>
-                    </div>
-                </div>
-            </div>
-        </header>
-    </div>
-    <div class="container">
-        <div class="row row-centered">
-            <div class="container-fluid">
-                <h1>Search for anything</h1>
-
-                <h2 style="color:#1C2C3A">Find the best places to eat, drink, shop, or visit in any city in the
-                    world.</h2><br/><br/>
+            <div class="right-align">
+                <a href="http://www.foursquare.com"><i style="font-size:24px" title="Search in Four Square" class="fa">
+                    &#xf180;</i></a>
+                <a href="http://www.yelp.com"><i style="font-size:24px" title="Search in Yelp" class="fa">
+                    &#xf1e9;</i></a>
             </div>
         </div>
-        <div class="row">
-            <div class="container-fluid">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <div class="input-group" style="padding-bottom:10px;">
-                            <input type="text" class="search-input" ng-model="term" placeholder="Enter search term">
-                            <input type="text" class="search-input" ng-model="area" placeholder="Enter locality"/>
-                            <i style="font-size:20px" class="fa" title="Get your location" ng-click="getLocation()">
-                                &#xf124;</i>
+    </div>
+    <div class="container">
+        <div class="section">
+            <div class="row">
+                <div class="center-align">
+                    <h4>Search for anything</h4>
+                    <h5 style="color:#1C2C3A">Find the best place to eat, drink, shop, or visit in any city in the
+                        world.</h5>
+                </div>
+            </div>
 
-                            <button type="button" class="searchButton" value="Show"
-                                    ng-click="showResult()">Search
-                            </button>
+            <div class="row">
+                <form class="form-inline" id="formValidate">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-field col s12 m6">
+                                <i class="material-icons prefix">find_in_page</i>
+                                <input id="term" type="text" class="validate" ng-model="term" required
+                                       ng-keypress="checkLocation()"
+                                       aria-required="true"/>
+                                <label for="term">Enter the search term *</label>
+                            </div>
+                            <div class="input-field col s12 m6">
+                                <i class="material-icons prefix" ng-click="getLocation()">my_location</i>
+                                <input id="locality" type="text" ng-model="area" ng-autocomplete class="validate"
+                                       required
+                                       aria-required="true" placeholder=""/>
+                                <label for="locality">Enter the locality *</label>
+                            </div>
+                            <div class="s12 m12 center-align">
+                                <button class="btn waves-effect waves-light center-align" type="submit" name="action"
+                                        ng-click="showResult()">Search
+                                </button>
+                                <i class="mdi-content-send right"></i>
+                            </div>
+
                         </div>
                     </div>
                 </form>
             </div>
-        </div>
-        <div class="row">
-            <div class="img-responsive container-fluid" id="googleMap" style="width:100%; height:75%;"></div>
-        </div>
-        <div class="flexContainer">
-            <div ng-repeat="search in queryData" class="detail-container">
-                <div class="detail-child">
-                    <img ng-src="{{search.image}}"/>
-                    <span>{{search.name}}</span></br>
-                    <span ng-if="search.contact.phone"><i style="font-size:24px" class="fa">&#xf10b;</i>{{search.contact.phone}}</span></br>
-                    <span><i style="font-size:24px" class="fa">&#xf005;</i>{{search.rating}}</span>
-                </div>
 
+            <div class="row">
+                <div id="loader" style="left:46%;position:relative;">
+                    <div class="preloader-wrapper big active align-center">
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="responsive-img" id="googleMap" style="width:100%; height:60%;"></div>
+            </div>
+            <div class="row">
+                <div class="card col m4 s6 small" ng-repeat="search in output" style="margin-top:5px">
+                    <div class="card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="{{search.image}}">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">{{search.name}}<i
+                                class="material-icons right">more_vert</i></span>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">{{search.name}}<i class="material-icons right">close</i></span>
+
+                        <p><i style="font-size:24px" class="fa">&#xf10b;</i>{{search.contact.phone}}</p>
+
+                        <p><i style="font-size:24px" class="fa">&#xf005;</i>{{search.rating}}</p>
+
+                        <p><i style="font-size:24px" class="fa fa-twitter" aria-hidden="true"></i>{{search.twitter}}</p>
+                        <a ng-href="{{search.url}}"><i style="font-size:24px" class="fa fa-globe"
+                                                       aria-hidden="true"></i>{{search.url}}</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <footer class="page-footer main-color">
+        <div class="footer-copyright right-align ">
+            © 2016 Copyright w3search
+        </div>
+        <div class="footer right-align ">
+            <a ng-href="http://www.github.com/goSahare"><i style="font-size:24px" class="fa fa-github"
+                                                           aria-hidden="true"></i>goSahare</a>
+        </div>
+
+    </footer>
+
 </div>
